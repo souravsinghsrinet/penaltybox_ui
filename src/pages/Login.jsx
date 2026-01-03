@@ -63,9 +63,6 @@ const Login = () => {
             <h1 className="text-4xl font-bold text-gray-800 mb-2">
               🎯 PenaltyBox
             </h1>
-            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-              Welcome Back
-            </h2>
             <p className="text-gray-600">
               Login to manage your penalties
             </p>
