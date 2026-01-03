@@ -10,10 +10,27 @@ export const authService = {
 
   // Login user
   login: async (credentials) => {
-    const response = await api.post('/auth/login', credentials);
+    // Backend expects OAuth2 format with 'username' field instead of 'email'
+    const formData = new URLSearchParams();
+    formData.append('username', credentials.email);
+    formData.append('password', credentials.password);
+    
+    const response = await api.post('/auth/login', formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+    
     if (response.data.access_token) {
       localStorage.setItem('token', response.data.access_token);
     }
+    
+    return response.data;
+  },
+
+  // Get current user info (after login)
+  getCurrentUserInfo: async () => {
+    const response = await api.get('/auth/me');
     return response.data;
   },
 
@@ -23,7 +40,7 @@ export const authService = {
     localStorage.removeItem('user');
   },
 
-  // Get current user
+  // Get current user from localStorage
   getCurrentUser: () => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
