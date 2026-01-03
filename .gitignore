@@ -23,6 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables
-*.env
-*.env.development
+# Environment variables (keep .env.production tracked)
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+# .env.production - NOT ignored, needs to be committed
