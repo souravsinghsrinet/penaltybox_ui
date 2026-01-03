@@ -24,7 +24,8 @@ const Dashboard = () => {
                 🎯 PenaltyBox Dashboard
               </h1>
               <p className="text-gray-600 mt-1">
-                Welcome back, <span className="font-semibold">{user?.name}</span>!
+                Welcome back, <span className="font-semibold">{user?.name}</span>
+                {user?.is_admin && <span className="ml-2 text-purple-600">👑</span>}!
               </p>
             </div>
             <button
@@ -62,15 +63,14 @@ const Dashboard = () => {
           <div className="space-y-3">
             <div className="flex items-center">
               <span className="text-gray-600 font-medium w-32">Name:</span>
-              <span className="text-gray-900">{user?.name}</span>
+              <span className="text-gray-900 flex items-center">
+                {user?.name}
+                {user?.is_admin && <span className="ml-2 text-purple-600 text-lg" title="Admin User">👑</span>}
+              </span>
             </div>
             <div className="flex items-center">
               <span className="text-gray-600 font-medium w-32">Email:</span>
               <span className="text-gray-900">{user?.email}</span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-gray-600 font-medium w-32">User ID:</span>
-              <span className="text-gray-900">{user?.id}</span>
             </div>
             {user?.group_id && (
               <div className="flex items-center">

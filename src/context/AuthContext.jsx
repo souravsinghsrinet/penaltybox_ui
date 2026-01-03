@@ -31,15 +31,27 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', access_token);
       setToken(access_token);
       
-      // Create user object from registration/credentials
-      // Since backend doesn't return user data on login, we'll store email
-      const userData = {
-        email: credentials.email,
-        // We'll get full user data later if needed
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
+      // Fetch user info from /auth/me endpoint
+      try {
+        const userInfo = await authService.getCurrentUserInfo();
+        const userData = {
+          id: userInfo.id,
+          name: userInfo.name,
+          email: userInfo.email,
+          is_admin: userInfo.is_admin || false,
+          group_id: userInfo.group_id,
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      } catch (error) {
+        // Fallback if /auth/me fails
+        const userData = {
+          email: credentials.email,
+          is_admin: false,
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      }
       
       return { success: true };
     } catch (error) {
@@ -71,6 +83,7 @@ export const AuthProvider = ({ children }) => {
           id: registeredUser.id,
           name: registeredUser.name,
           email: registeredUser.email,
+          is_admin: registeredUser.is_admin || false,
           group_id: registeredUser.group_id,
         };
         localStorage.setItem('user', JSON.stringify(fullUserData));
