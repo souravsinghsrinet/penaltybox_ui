@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Groups from './pages/groups/Groups';
+import GroupDetails from './pages/groups/GroupDetails';
 import Penalties from './pages/Penalties';
 import Rules from './pages/Rules';
 import Proofs from './pages/Proofs';
@@ -68,6 +69,7 @@ function App() {
             >
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/groups" element={<Groups />} />
+              <Route path="/groups/:id" element={<GroupDetails />} />
               <Route path="/penalties" element={<Penalties />} />
               <Route path="/rules" element={<Rules />} />
               <Route path="/proofs" element={<Proofs />} />
