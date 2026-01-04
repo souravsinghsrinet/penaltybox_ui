@@ -1,80 +1,61 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { MdDashboard } from 'react-icons/md';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    toast.success('Logged out successfully');
-    navigate('/login');
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                🎯 PenaltyBox Dashboard
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Welcome back, <span className="font-semibold">{user?.name}</span>
-                {user?.is_admin && <span className="ml-2 text-purple-600">👑</span>}!
-              </p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="btn-secondary"
-            >
-              Logout
-            </button>
-          </div>
+    <div className="max-w-7xl mx-auto">
+      {/* Page Header */}
+      <div className="mb-6">
+        <div className="flex items-center space-x-3 mb-2">
+          <MdDashboard size={32} className="text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900">
+            Dashboard
+          </h1>
         </div>
-      </header>
+        <p className="text-gray-600">
+          Welcome back, <span className="font-semibold">{user?.name}</span>
+          {user?.is_admin && <span className="ml-2 text-purple-600">👑</span>}!
+        </p>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Card */}
-        <div className="card mb-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">
-                Welcome to Your Dashboard! 🎉
-              </h2>
-              <p className="text-blue-100">
-                You're successfully logged in and authenticated.
-              </p>
-            </div>
-            <div className="text-6xl">👋</div>
+      {/* Welcome Card */}
+      <div className="card mb-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">
+              Welcome to Your Dashboard! 🎉
+            </h2>
+            <p className="text-blue-100">
+              You're successfully logged in and authenticated.
+            </p>
           </div>
+          <div className="text-6xl">👋</div>
         </div>
+      </div>
 
-        {/* User Info Card */}
-        <div className="card mb-8">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Your Profile Information
-          </h3>
-          <div className="space-y-3">
+      {/* User Info Card */}
+      <div className="card mb-8">
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+          Your Profile Information
+        </h3>
+        <div className="space-y-3">
+          <div className="flex items-center">
+            <span className="text-gray-600 font-medium w-32">Name:</span>
+            <span className="text-gray-900 flex items-center">
+              {user?.name}
+              {user?.is_admin && <span className="ml-2 text-purple-600 text-lg" title="Admin User">👑</span>}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="text-gray-600 font-medium w-32">Email:</span>
+            <span className="text-gray-900">{user?.email}</span>
+          </div>
+          {user?.group_id && (
             <div className="flex items-center">
-              <span className="text-gray-600 font-medium w-32">Name:</span>
-              <span className="text-gray-900 flex items-center">
-                {user?.name}
-                {user?.is_admin && <span className="ml-2 text-purple-600 text-lg" title="Admin User">👑</span>}
-              </span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-gray-600 font-medium w-32">Email:</span>
-              <span className="text-gray-900">{user?.email}</span>
-            </div>
-            {user?.group_id && (
-              <div className="flex items-center">
-                <span className="text-gray-600 font-medium w-32">Group ID:</span>
+              <span className="text-gray-600 font-medium w-32">Group ID:</span>
                 <span className="text-gray-900">{user.group_id}</span>
               </div>
             )}
@@ -142,7 +123,6 @@ const Dashboard = () => {
             Try logging out and accessing this page directly - you'll be redirected to login!
           </p>
         </div>
-      </main>
     </div>
   );
 };

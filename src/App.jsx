@@ -1,7 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+
+// Layout
+import MainLayout from './layouts/MainLayout';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -11,6 +14,11 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Groups from './pages/groups/Groups';
+import Penalties from './pages/Penalties';
+import Rules from './pages/Rules';
+import Proofs from './pages/Proofs';
+import Leaderboard from './pages/Leaderboard';
 
 function App() {
   return (
@@ -50,15 +58,25 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
-            {/* Protected Routes */}
+            {/* Protected Routes with Layout */}
             <Route 
-              path="/dashboard" 
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <MainLayout />
                 </ProtectedRoute>
-              } 
-            />
+              }
+            >
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/groups" element={<Groups />} />
+              <Route path="/penalties" element={<Penalties />} />
+              <Route path="/rules" element={<Rules />} />
+              <Route path="/proofs" element={<Proofs />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              
+              {/* Admin Routes - Add later with admin check */}
+              {/* <Route path="/admin/create-group" element={<CreateGroup />} /> */}
+              {/* <Route path="/admin/manage" element={<AdminManage />} /> */}
+            </Route>
             
             {/* Catch all route - 404 */}
             <Route path="*" element={
