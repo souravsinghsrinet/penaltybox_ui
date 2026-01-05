@@ -13,6 +13,8 @@ import RemoveMemberModal from '../../components/RemoveMemberModal';
 import CreateRuleModal from '../../components/CreateRuleModal';
 import EditRuleModal from '../../components/EditRuleModal';
 import DeleteRuleModal from '../../components/DeleteRuleModal';
+import IssuePenaltyModal from '../../components/IssuePenaltyModal';
+import StatusChangeModal from '../../components/StatusChangeModal';
 
 export default function GroupDetails() {
   const { id } = useParams();
@@ -32,6 +34,9 @@ export default function GroupDetails() {
   const [showEditRuleModal, setShowEditRuleModal] = useState(false);
   const [showDeleteRuleModal, setShowDeleteRuleModal] = useState(false);
   const [selectedRule, setSelectedRule] = useState(null);
+  const [showIssuePenaltyModal, setShowIssuePenaltyModal] = useState(false);
+  const [showStatusChangeModal, setShowStatusChangeModal] = useState(false);
+  const [selectedPenaltyForStatusChange, setSelectedPenaltyForStatusChange] = useState(null);
 
   useEffect(() => {
     fetchGroupDetails();
@@ -141,6 +146,11 @@ export default function GroupDetails() {
     setShowDeleteRuleModal(false);
     setSelectedRule(null);
     fetchRules(); // Refresh rules data
+  };
+
+  const handlePenaltyActionSuccess = () => {
+    setShowIssuePenaltyModal(false);
+    fetchPenalties(); // Refresh penalties data
   };
 
   const formatDate = (dateString) => {
@@ -490,6 +500,19 @@ export default function GroupDetails() {
         {/* Penalties Tab */}
         {activeTab === 'penalties' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            {/* Issue Penalty Button - Admin Only */}
+            {user?.is_admin && activeTab === 'penalties' && (
+              <div className="mb-6 flex justify-end">
+                <button
+                  onClick={() => setShowIssuePenaltyModal(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                >
+                  <MdAdd className="w-5 h-5" />
+                  Issue Penalty
+                </button>
+              </div>
+            )}
+
             {loadingTab ? (
               <div className="flex justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -498,7 +521,16 @@ export default function GroupDetails() {
               <div className="text-center py-12">
                 <MdWarning className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No Penalties Yet</h3>
-                <p className="text-gray-500">This group doesn't have any penalties recorded.</p>
+                <p className="text-gray-500 mb-4">This group doesn't have any penalties recorded.</p>
+                {user?.is_admin && (
+                  <button
+                    onClick={() => setShowIssuePenaltyModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  >
+                    <MdAdd className="w-5 h-5" />
+                    Issue First Penalty
+                  </button>
+                )}
               </div>
             ) : (
               <div className="space-y-4">
@@ -515,15 +547,37 @@ export default function GroupDetails() {
                             {penalty.status}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600">{penalty.note || 'No description'}</p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          {formatDate(penalty.created_at)}
+                        <p className="text-sm text-gray-800 mb-1">
+                          <strong>Note:</strong> {penalty.note || 'No note provided'}
                         </p>
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                          <span><strong>User:</strong> {penalty.user_name || `ID: ${penalty.user_id}`}</span>
+                          <span><strong>Rule:</strong> {penalty.rule_title || `ID: ${penalty.rule_id}`}</span>
+                          <span>{formatDate(penalty.created_at)}</span>
+                        </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end gap-2">
                         <span className="text-lg font-bold text-orange-600">
                           {formatCurrency(penalty.amount)}
                         </span>
+                        
+                        {/* Admin: Change Status Button */}
+                        {user?.is_admin && (
+                          <button
+                            onClick={() => {
+                              setSelectedPenaltyForStatusChange(penalty);
+                              setShowStatusChangeModal(true);
+                            }}
+                            className={`text-xs px-3 py-1 rounded border transition-colors ${
+                              penalty.status === 'PAID'
+                                ? 'border-yellow-300 text-yellow-700 hover:bg-yellow-50'
+                                : 'border-green-300 text-green-700 hover:bg-green-50'
+                            }`}
+                            title={penalty.status === 'PAID' ? 'Mark as Unpaid' : 'Mark as Paid (Cash)'}
+                          >
+                            {penalty.status === 'PAID' ? 'Mark Unpaid' : 'Mark Paid'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -665,6 +719,28 @@ export default function GroupDetails() {
             setSelectedRule(null);
           }}
           onSuccess={handleRuleActionSuccess}
+        />
+      )}
+
+      {showIssuePenaltyModal && (
+        <IssuePenaltyModal
+          groupId={group.id}
+          groupName={group.name}
+          onClose={() => setShowIssuePenaltyModal(false)}
+          onSuccess={handlePenaltyActionSuccess}
+        />
+      )}
+
+      {showStatusChangeModal && selectedPenaltyForStatusChange && (
+        <StatusChangeModal
+          penalty={selectedPenaltyForStatusChange}
+          onClose={() => {
+            setShowStatusChangeModal(false);
+            setSelectedPenaltyForStatusChange(null);
+          }}
+          onSuccess={() => {
+            fetchPenalties();
+          }}
         />
       )}
     </div>

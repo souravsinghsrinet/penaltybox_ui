@@ -1,9 +1,48 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { MdDashboard } from 'react-icons/md';
+import api from '../services/api';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [penalties, setPenalties] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserPenalties();
+    }
+  }, [user]);
+
+  const fetchUserPenalties = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/penalties/user/${user.id}`);
+      setPenalties(response.data);
+    } catch (error) {
+      console.error('Error fetching penalties:', error);
+      toast.error('Failed to load penalty data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate stats
+  const totalPenalties = penalties.length;
+  const totalPaid = penalties
+    .filter(p => p.status === 'PAID')
+    .reduce((sum, p) => sum + p.amount, 0);
+  const pendingDues = penalties
+    .filter(p => p.status === 'UNPAID')
+    .reduce((sum, p) => sum + p.amount, 0);
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR'
+    }).format(amount);
+  };
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -68,7 +107,11 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Penalties</p>
-                <p className="text-3xl font-bold text-gray-900">0</p>
+                {loading ? (
+                  <div className="animate-pulse h-8 w-16 bg-gray-300 rounded"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{totalPenalties}</p>
+                )}
               </div>
               <div className="text-4xl">📊</div>
             </div>
@@ -78,7 +121,11 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Paid</p>
-                <p className="text-3xl font-bold text-gray-900">₹0</p>
+                {loading ? (
+                  <div className="animate-pulse h-8 w-24 bg-gray-300 rounded"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalPaid)}</p>
+                )}
               </div>
               <div className="text-4xl">💰</div>
             </div>
@@ -88,7 +135,11 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Pending Dues</p>
-                <p className="text-3xl font-bold text-gray-900">₹0</p>
+                {loading ? (
+                  <div className="animate-pulse h-8 w-24 bg-gray-300 rounded"></div>
+                ) : (
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(pendingDues)}</p>
+                )}
               </div>
               <div className="text-4xl">⏳</div>
             </div>

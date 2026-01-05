@@ -347,36 +347,187 @@
 ---
 
 #### ✅ Task 7: Penalty Issuance (Admin)
-**Status:** Not Started
+**Status:** ✅ COMPLETED (January 5, 2026)
 
 **Objectives:**
-- Create "Issue Penalty" modal/form
-- Implement form fields:
-  - User dropdown (select from group members)
-  - Rule dropdown (select from group rules)
-  - Custom amount (optional override)
-  - Note/Reason field
-- Add validation
-- Integrate API call
-- Show success notification
-- Refresh penalties list after issuance
+- ✅ Create "Issue Penalty" modal/form
+- ✅ Implement form fields:
+  - ✅ User dropdown (select from group members)
+  - ✅ Rule dropdown (select from group rules)
+  - ✅ Custom amount (optional override - supports legacy penalties)
+  - ✅ Note/Reason field
+- ✅ Add validation
+- ✅ Integrate API call
+- ✅ Show success notification
+- ✅ Refresh penalties list after issuance
+
+**Implementation Details:**
+
+**Backend Updates:**
+- ✅ Fixed POST `/penalties?group_id={id}` endpoint to properly validate:
+  - Group exists
+  - User exists and is a member of the group (many-to-many relationship)
+  - Rule exists and belongs to the group
+- ✅ Added GET `/penalties?group_id={id}` endpoint for fetching penalties by group
+- ✅ Added GET `/penalties/user/{user_id}` endpoint for fetching user's penalties
+- ✅ Enhanced penalty responses to include `user_name` and `rule_title` (not just IDs)
+- ✅ Added PUT `/penalties/{penalty_id}/status` endpoint for admins to change penalty status
+- ✅ Supports custom amount override (allows issuing penalties with any amount, regardless of rule amount)
+- ✅ Admin-only access enforced via `get_current_admin_user` dependency
+
+**Frontend Components Created:**
+- ✅ `IssuePenaltyModal.jsx` - Complete penalty issuance modal with:
+  - Member dropdown with email display
+  - Rule dropdown showing rule title and default amount
+  - Custom amount field (auto-filled with rule amount, fully editable)
+  - Optional note/reason textarea
+  - Form validation (all required fields, positive amount)
+  - Loading states for data fetching and submission
+  - Success/error toast notifications
+  - Info box explaining custom amount override feature
+
+- ✅ `StatusChangeModal.jsx` - Penalty status change modal for admins:
+  - Mark UNPAID penalties as PAID (cash payment scenario)
+  - Mark PAID penalties as UNPAID (revert if needed)
+  - Displays penalty details (user, rule, amount)
+  - Optional admin note field for record keeping
+  - Confirmation with contextual warnings
+  - Color-coded buttons (green for paid, yellow for unpaid)
+
+**Frontend Features:**
+- ✅ "Issue Penalty" button in Penalties tab (top-right, admin only)
+- ✅ "Issue First Penalty" button in empty state (admin only)
+- ✅ Automatic refresh of penalties list after successful issuance
+- ✅ Disabled state when no members or no rules exist
+- ✅ Real-time validation with error messages
+- ✅ Currency formatting (INR ₹) for all amounts instead of USD $
+- ✅ Parallel API calls for members and rules (faster loading)
+- ✅ **Cash Payment Handling:** "Mark as Paid" / "Mark as Unpaid" buttons on penalty cards (admin only)
+  - Allows admins to mark penalties as PAID when payment is received in cash (no proof upload required)
+  - Can revert to UNPAID if marked incorrectly
+  - Automatically updates Dashboard stats after status change
+  - No proof upload needed for cash transactions
+
+**Pages Implemented:**
+
+**1. Penalties Page (`/penalties`):**
+- ✅ Overview dashboard with comprehensive stats:
+  - Total penalties count and amount
+  - Unpaid penalties count and amount
+  - Paid penalties count and amount
+- ✅ Three-way filtering system:
+  - Filter by group dropdown
+  - Filter by status (All, PAID, UNPAID)
+  - Search by note or group name
+- ✅ Penalties grouped by group with headers
+- ✅ Quick actions per group:
+  - Issue Penalty button (admin only)
+  - View Group button (navigate to group details)
+- ✅ Penalty cards showing:
+  - Status badge (PAID/UNPAID with color coding)
+  - Note/reason
+  - **User name** and **Rule title** (not IDs)
+  - Created date and time
+  - Amount (formatted in INR ₹)
+  - **"Mark Paid"/"Mark Unpaid" button (admin only)** - for cash payments
+- ✅ Empty states for no penalties or no search results
+- ✅ Responsive design
+- ✅ Permission-based UI (admin vs regular user)
+
+**2. Group Details - Penalties Tab (`/groups/:id`):**
+- ✅ "Issue Penalty" button (top of tab, admin only)
+- ✅ "Issue First Penalty" button (empty state, admin only)
+- ✅ Penalties list with status badges
+- ✅ Integration with IssuePenaltyModal
+- ✅ **"Mark Paid"/"Mark Unpaid" button on each penalty card (admin only)**
+- ✅ Display user names and rule titles instead of IDs
+
+**3. Dashboard Page (`/`):**
+- ✅ Real-time penalty stats for logged-in user:
+  - Total Penalties count (fetched from GET /penalties/user/{user_id})
+  - Total Paid amount in INR (sum of PAID penalties)
+  - Pending Dues amount in INR (sum of UNPAID penalties)
+- ✅ Loading states with skeleton animations
+- ✅ Auto-updates when penalties are issued or status changes
+
+**Special Features:**
+
+**1. Legacy Penalties:**
+- ✅ Supports creating a rule with amount = 0 (e.g., "Legacy Penalties")
+- ✅ Allows issuing penalties with custom amounts greater than rule amount
+- ✅ Perfect for importing historical data or special cases
+- ✅ Rule amount serves as default but can be fully overridden
+
+**2. Cash Payment Handling:**
+- ✅ Admin can mark penalties as PAID directly without proof upload (for cash payments)
+- ✅ Use Case: When a user pays penalty amount in cash, admin clicks "Mark Paid" button
+- ✅ StatusChangeModal shows confirmation with penalty details
+- ✅ Optional admin note field for recording payment details
+- ✅ Can revert to UNPAID if status was changed incorrectly
+- ✅ Dashboard and stats automatically update after status change
+- ✅ **Note:** For online/UPI payments with proof upload, see Task 9
+
+**3. Currency Formatting:**
+- ✅ All amounts display in Indian Rupees (₹) instead of USD ($)
+- ✅ Uses `Intl.NumberFormat` with 'en-IN' locale
+- ✅ Consistent formatting across all pages
+
+**4. Human-Readable Display:**
+- ✅ Penalty cards show user names and rule titles instead of numeric IDs
+- ✅ Backend enriches penalty data by joining User and Rule tables
+- ✅ Fallback to "User #ID" / "Rule #ID" if data not found
 
 **API Endpoints:**
-- `POST /groups/{id}/penalties`
+- ✅ `POST /penalties?group_id={id}` (create penalty)
+- ✅ `GET /penalties?group_id={id}` (get penalties for group with enriched data)
+- ✅ `GET /penalties/user/{user_id}` (get user's penalties with enriched data)
+- ✅ `PUT /penalties/{penalty_id}/status?status={PAID|UNPAID}` (change penalty status - admin only)
+
+**Permission Controls:**
+- ✅ Only global admins (is_admin=true) can issue penalties
+- ✅ Only global admins can change penalty status (Mark Paid/Unpaid)
+- ✅ All authenticated users can view penalties
+- ✅ UI buttons conditionally rendered based on user.is_admin
 
 **Deliverables:**
-- Working penalty issuance flow
-- User and rule selection
-- Custom amount override
-- Success notifications
-- Auto-refresh penalty list
+- ✅ Working penalty issuance flow
+- ✅ User and rule selection with details
+- ✅ Custom amount override (supports legacy penalties)
+- ✅ Success/error notifications
+- ✅ Auto-refresh penalty list
+- ✅ Proper loading and error states
+- ✅ Form validation
 
-**Testing:**
-- Issue penalty to a user
-- Use rule amount vs custom amount
-- Verify penalty appears in list
-- Test validation errors
-- Check notifications
+**Testing Checklist:**
+- ✅ Issue penalty to a user with rule default amount
+- ✅ Issue penalty with custom amount override
+- ✅ Issue legacy penalty (rule amount = 0, custom amount > 0)
+- ✅ Verify penalty appears in list immediately
+- ✅ Test validation errors (missing fields, invalid amount)
+- ✅ Test with no members (disabled state)
+- ✅ Test with no rules (disabled state)
+- ✅ Test as admin user (all features available)
+- ✅ Test as regular user (no issue penalty button visible)
+- ✅ Check success/error notifications
+- ✅ Verify currency formatting (INR ₹)
+- ✅ Verify user names and rule titles display (not IDs)
+- ✅ **Cash payment flow:**
+  - ✅ Issue penalty → Verify status = UNPAID
+  - ✅ Click "Mark Paid" → Confirm in modal → Verify status = PAID
+  - ✅ Verify Dashboard stats update (pending dues decrease, total paid increase)
+  - ✅ Click "Mark Unpaid" → Confirm → Verify status = UNPAID again
+  - ✅ Test status change from both Penalties page and Group Details page
+
+**Files Modified:**
+- Backend:
+  - `app/schemas/schemas.py` - Enhanced Penalty schema with user_name and rule_title fields
+  - `app/api/v1/penalties.py` - Fixed POST, added GET endpoints with data enrichment, added PUT status endpoint
+- Frontend:
+  - `src/components/IssuePenaltyModal.jsx` - New file (penalty issuance form)
+  - `src/components/StatusChangeModal.jsx` - New file (mark paid/unpaid for cash payments)
+  - `src/pages/Penalties.jsx` - Complete penalties management page with status change buttons
+  - `src/pages/groups/GroupDetails.jsx` - Penalties tab with Issue Penalty and status change integration
+  - `src/pages/Dashboard.jsx` - Real penalty stats (total, paid, pending)
 
 ---
 
@@ -424,8 +575,10 @@
 #### ✅ Task 9: Proof Upload & Management
 **Status:** Not Started
 
+**Note:** This task is specifically for **online/UPI payments** where users need to upload payment proof. For **cash payments**, admins can directly mark penalties as PAID using the "Mark as Paid" feature (implemented in Task 7).
+
 **Objectives:**
-- Create proof upload form/modal
+- Create proof upload form/modal (for online/UPI payments only)
 - Implement file input:
   - Accept image files only (jpg, png)
   - Add image preview before upload
@@ -438,6 +591,10 @@
   - Status (PENDING/APPROVED/DECLINED)
   - Admin note (if declined)
 - Display proof list for each penalty
+
+**Use Cases:**
+- **Online/UPI Payments:** User uploads screenshot of UPI transaction → Admin reviews proof → Approves/Declines → Penalty status changes to PAID if approved
+- **Cash Payments:** Admin directly marks penalty as PAID without proof (handled in Task 7, no proof upload needed)
 
 **API Endpoints:**
 - `POST /proofs` (upload proof)
