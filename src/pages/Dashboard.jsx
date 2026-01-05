@@ -146,24 +146,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Coming Soon Card */}
-        <div className="card">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Coming Soon
-          </h3>
-          <div className="space-y-2 text-gray-600">
-            <p>✨ In the next tasks, we'll add:</p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Complete navigation with sidebar</li>
-              <li>Groups management</li>
-              <li>Penalties tracking</li>
-              <li>Proof upload and management</li>
-              <li>Leaderboard rankings</li>
-              <li>Payment history</li>
-            </ul>
-          </div>
-        </div>
-
         {/* Test Authentication Card */}
         <div className="card mt-8 bg-green-50">
           <h3 className="text-lg font-semibold text-green-800 mb-2">
