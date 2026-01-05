@@ -236,36 +236,113 @@
 ---
 
 #### ✅ Task 6: Rules Management
-**Status:** Not Started
+**Status:** ✅ COMPLETED (January 5, 2026)
 
 **Objectives:**
-- Create Rules section in Group Details
-- Build "Add Rule" form/modal:
-  - Rule title field
-  - Penalty amount field
-  - Validation (amount must be positive)
-- Display rules list with:
-  - Rule title
-  - Penalty amount
-  - Edit/Delete options
-- Implement API integration for CRUD operations
+- ✅ Create Rules section in Group Details
+- ✅ Build "Add Rule" form/modal:
+  - ✅ Rule title field
+  - ✅ Penalty amount field
+  - ✅ Validation (amount must be positive)
+- ✅ Display rules list with:
+  - ✅ Rule title
+  - ✅ Penalty amount
+  - ✅ Edit/Delete options
+- ✅ Implement API integration for CRUD operations
+
+**Implementation Details:**
+
+**Backend Updates:**
+- ✅ Added `RuleUpdate` schema in schemas.py
+- ✅ Created PUT `/groups/{group_id}/rules/{rule_id}` endpoint for updating rules
+- ✅ All endpoints restricted to global admins (is_admin=true)
+- ✅ Proper validation and error handling
+
+**Frontend Components Created:**
+- ✅ `CreateRuleModal.jsx` - Create new rules with validation
+- ✅ `EditRuleModal.jsx` - Edit existing rules
+- ✅ `DeleteRuleModal.jsx` - Delete confirmation with warnings
+
+**Frontend Features:**
+- ✅ "Create Rule" button in Rules tab (admin only)
+- ✅ Empty state with "Create First Rule" button
+- ✅ Edit/Delete buttons on each rule card (admin only)
+- ✅ Form validation:
+  - Title must be at least 3 characters
+  - Amount must be positive number
+- ✅ Currency formatting for display
+- ✅ Date formatting for created_at
+- ✅ Success/error toast notifications
+- ✅ Loading states during API calls
+- ✅ Proper error handling
 
 **API Endpoints:**
-- `POST /groups/{id}/rules` (create rule)
-- `PUT /groups/{id}/rules/{rule_id}` (update rule)
-- `DELETE /groups/{id}/rules/{rule_id}` (delete rule)
+- ✅ `POST /groups/{id}/rules` (create rule)
+- ✅ `PUT /groups/{id}/rules/{rule_id}` (update rule)
+- ✅ `DELETE /groups/{id}/rules/{rule_id}` (delete rule)
+- ✅ `GET /groups/{id}/rules` (list rules)
+
+**Permission Controls:**
+- ✅ Only global admins (is_admin=true) can create rules
+- ✅ Only global admins can edit rules
+- ✅ Only global admins can delete rules
+- ✅ All authenticated users can view rules
+- ✅ UI buttons conditionally rendered based on user.is_admin
 
 **Deliverables:**
-- Add rule functionality
-- Rules list with edit/delete
-- Form validation working
-- Success/error notifications
+- ✅ Add rule functionality working
+- ✅ Rules list with edit/delete working
+- ✅ Form validation working
+- ✅ Success/error notifications working
+- ✅ Responsive design
+- ✅ Proper loading and error states
 
 **Testing:**
-- Create new rules
-- Edit existing rules
-- Delete rules
-- Validate amount field (only positive numbers)
+- ✅ Create new rules
+- ✅ Edit existing rules
+- ✅ Delete rules
+- ✅ Validate amount field (only positive numbers)
+- ✅ Validate title field (minimum 3 characters)
+- ✅ Test as admin user (all features available)
+- ✅ Test as regular user (read-only, no buttons)
+- ✅ Test empty state
+- ✅ Test error scenarios
+- ✅ Verify currency formatting
+- ✅ Verify date formatting
+
+**Files Modified:**
+- Backend:
+  - `app/schemas/schemas.py` - Added RuleUpdate schema
+  - `app/api/v1/rules.py` - Added PUT endpoint
+- Frontend:
+  - `src/components/CreateRuleModal.jsx` - New file
+  - `src/components/EditRuleModal.jsx` - New file
+  - `src/components/DeleteRuleModal.jsx` - New file
+  - `src/pages/Rules.jsx` - Complete rules management page
+  - `src/pages/groups/GroupDetails.jsx` - Integrated rule management in Rules tab
+
+**Pages Implemented:**
+
+**1. Rules Page (`/rules`):**
+- ✅ Overview dashboard with stats (total rules, total groups)
+- ✅ Filter by group dropdown
+- ✅ Search by rule title or group name
+- ✅ Rules grouped by group name
+- ✅ Quick actions:
+  - Create rule for any group (admin only)
+  - Edit any rule (admin only)
+  - Delete any rule (admin only)
+  - Navigate to group details
+- ✅ Empty states for no rules or no search results
+- ✅ Responsive design
+- ✅ Permission-based UI (admin vs regular user)
+
+**2. Group Details - Rules Tab (`/groups/:id`):**
+- ✅ Create Rule button (top of tab, admin only)
+- ✅ Create First Rule button (empty state, admin only)
+- ✅ Edit/Delete buttons on each rule card (admin only)
+- ✅ Enhanced rule cards with formatted display
+- ✅ Tab count badge updates automatically
 
 ---
 

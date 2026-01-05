@@ -3,13 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   MdArrowBack, MdGroups, MdPeople, MdAdminPanelSettings, 
   MdPersonAdd, MdPersonRemove, MdStar, MdGavel, MdWarning,
-  MdLeaderboard
+  MdLeaderboard, MdAdd, MdEdit, MdDelete
 } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import AddMemberModal from '../../components/AddMemberModal';
 import RemoveMemberModal from '../../components/RemoveMemberModal';
+import CreateRuleModal from '../../components/CreateRuleModal';
+import EditRuleModal from '../../components/EditRuleModal';
+import DeleteRuleModal from '../../components/DeleteRuleModal';
 
 export default function GroupDetails() {
   const { id } = useParams();
@@ -25,6 +28,10 @@ export default function GroupDetails() {
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [showRemoveMemberModal, setShowRemoveMemberModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [showCreateRuleModal, setShowCreateRuleModal] = useState(false);
+  const [showEditRuleModal, setShowEditRuleModal] = useState(false);
+  const [showDeleteRuleModal, setShowDeleteRuleModal] = useState(false);
+  const [selectedRule, setSelectedRule] = useState(null);
 
   useEffect(() => {
     fetchGroupDetails();
@@ -118,6 +125,24 @@ export default function GroupDetails() {
     fetchGroupDetails(); // Refresh group data
   };
 
+  const handleEditRule = (rule) => {
+    setSelectedRule(rule);
+    setShowEditRuleModal(true);
+  };
+
+  const handleDeleteRule = (rule) => {
+    setSelectedRule(rule);
+    setShowDeleteRuleModal(true);
+  };
+
+  const handleRuleActionSuccess = () => {
+    setShowCreateRuleModal(false);
+    setShowEditRuleModal(false);
+    setShowDeleteRuleModal(false);
+    setSelectedRule(null);
+    fetchRules(); // Refresh rules data
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -130,9 +155,9 @@ export default function GroupDetails() {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   };
 
@@ -384,39 +409,81 @@ export default function GroupDetails() {
 
         {/* Rules Tab */}
         {activeTab === 'rules' && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            {loadingTab ? (
-              <div className="flex justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              </div>
-            ) : rules.length === 0 ? (
-              <div className="text-center py-12">
-                <MdGavel className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Rules Yet</h3>
-                <p className="text-gray-500">This group doesn't have any rules defined.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {rules.map((rule) => (
-                  <div key={rule.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{rule.title}</h3>
-                        <p className="text-sm text-gray-500 mt-1">Amount: {formatCurrency(rule.amount)}</p>
-                        <p className="text-xs text-gray-400 mt-2">
-                          Created {formatDate(rule.created_at)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-lg font-bold text-orange-600">
-                          {formatCurrency(rule.amount)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+          <div>
+            {/* Header with Create Button */}
+            {user?.is_admin && (
+              <div className="mb-4 flex justify-end">
+                <button
+                  onClick={() => setShowCreateRuleModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <MdAdd className="w-5 h-5" />
+                  Create Rule
+                </button>
               </div>
             )}
+
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              {loadingTab ? (
+                <div className="flex justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+              ) : rules.length === 0 ? (
+                <div className="text-center py-12">
+                  <MdGavel className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Rules Yet</h3>
+                  <p className="text-gray-500 mb-4">This group doesn't have any rules defined.</p>
+                  {user?.is_admin && (
+                    <button
+                      onClick={() => setShowCreateRuleModal(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <MdAdd className="w-5 h-5" />
+                      Create First Rule
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {rules.map((rule) => (
+                    <div key={rule.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">{rule.title}</h3>
+                          <p className="text-sm text-gray-500 mt-1">Penalty: {formatCurrency(rule.amount)}</p>
+                          <p className="text-xs text-gray-400 mt-2">
+                            Created {formatDate(rule.created_at)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-bold text-orange-600">
+                            {formatCurrency(rule.amount)}
+                          </span>
+                          {user?.is_admin && (
+                            <div className="flex gap-2 ml-4">
+                              <button
+                                onClick={() => handleEditRule(rule)}
+                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="Edit rule"
+                              >
+                                <MdEdit className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteRule(rule)}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Delete rule"
+                              >
+                                <MdDelete className="w-5 h-5" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -563,6 +630,41 @@ export default function GroupDetails() {
             setSelectedMember(null);
           }}
           onSuccess={handleMemberActionSuccess}
+        />
+      )}
+
+      {showCreateRuleModal && (
+        <CreateRuleModal
+          groupId={group.id}
+          groupName={group.name}
+          onClose={() => setShowCreateRuleModal(false)}
+          onSuccess={handleRuleActionSuccess}
+        />
+      )}
+
+      {showEditRuleModal && selectedRule && (
+        <EditRuleModal
+          groupId={group.id}
+          groupName={group.name}
+          rule={selectedRule}
+          onClose={() => {
+            setShowEditRuleModal(false);
+            setSelectedRule(null);
+          }}
+          onSuccess={handleRuleActionSuccess}
+        />
+      )}
+
+      {showDeleteRuleModal && selectedRule && (
+        <DeleteRuleModal
+          groupId={group.id}
+          groupName={group.name}
+          rule={selectedRule}
+          onClose={() => {
+            setShowDeleteRuleModal(false);
+            setSelectedRule(null);
+          }}
+          onSuccess={handleRuleActionSuccess}
         />
       )}
     </div>
