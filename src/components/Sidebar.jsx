@@ -11,6 +11,7 @@ import {
   MdAdd,
   MdAdminPanelSettings,
   MdClose,
+  MdAccountBalance,
 } from 'react-icons/md';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -22,6 +23,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { path: '/dashboard', icon: MdDashboard, label: 'Dashboard' },
     { path: '/groups', icon: MdGroup, label: 'Groups' },
     { path: '/penalties', icon: MdGavel, label: 'Penalties' },
+    { path: '/my-penalties', icon: MdAccountBalance, label: 'My Penalties' },
     { path: '/rules', icon: MdRule, label: 'Rules' },
     { path: '/proofs', icon: MdFileUpload, label: 'Proofs' },
     { path: '/leaderboard', icon: MdLeaderboard, label: 'Leaderboard' },

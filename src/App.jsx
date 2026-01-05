@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard';
 import Groups from './pages/groups/Groups';
 import GroupDetails from './pages/groups/GroupDetails';
 import Penalties from './pages/Penalties';
+import MyPenalties from './pages/MyPenalties';
 import Rules from './pages/Rules';
 import Proofs from './pages/Proofs';
 import Leaderboard from './pages/Leaderboard';
@@ -71,6 +72,7 @@ function App() {
               <Route path="/groups" element={<Groups />} />
               <Route path="/groups/:id" element={<GroupDetails />} />
               <Route path="/penalties" element={<Penalties />} />
+              <Route path="/my-penalties" element={<MyPenalties />} />
               <Route path="/rules" element={<Rules />} />
               <Route path="/proofs" element={<Proofs />} />
               <Route path="/leaderboard" element={<Leaderboard />} />

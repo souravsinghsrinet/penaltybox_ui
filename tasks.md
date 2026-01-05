@@ -534,40 +534,176 @@
 ### **Phase 3: User Features**
 
 #### ✅ Task 8: My Penalties Page (User View)
-**Status:** Not Started
+**Status:** ✅ COMPLETED (January 5, 2026)
 
 **Objectives:**
-- Create "My Penalties" page (`/my-penalties`)
-- Display user's penalties in table/card format:
-  - Rule name
-  - Amount
-  - Status (PAID/UNPAID)
-  - Issue date
-  - Note/Reason
-- Implement filters:
-  - All penalties
-  - Unpaid only
-  - Paid only
-- Show summary statistics:
-  - Total paid amount
-  - Total due amount
-  - Number of penalties
-- Add "Upload Proof" button for unpaid penalties
-- Integrate API call
+- ✅ Create "My Penalties" page (`/my-penalties`)
+- ✅ Display user's penalties in table/card format:
+  - ✅ Rule name
+  - ✅ Amount
+  - ✅ Status (PAID/UNPAID)
+  - ✅ Issue date
+  - ✅ Note/Reason
+- ✅ Implement filters:
+  - ✅ All penalties
+  - ✅ Unpaid only
+  - ✅ Paid only
+- ✅ Show summary statistics:
+  - ✅ Total paid amount
+  - ✅ Total due amount
+  - ✅ Number of penalties
+- ✅ Add "Upload Proof" button for unpaid penalties (placeholder for Task 9)
+- ✅ Integrate API call
+
+**Implementation Details:**
+
+**Frontend Components Created:**
+- ✅ `MyPenalties.jsx` - Complete user penalties page with:
+  - Three summary statistic cards (Total, Paid, Due)
+  - Filter tabs (All, Unpaid, Paid) with counts
+  - Responsive table showing:
+    - Date with time
+    - Rule title (or Rule #ID if not available)
+    - Note/Reason with fallback message
+    - Amount formatted in INR
+    - Status badge with icons (PAID/UNPAID)
+    - Upload Proof button for unpaid penalties (placeholder)
+  - Empty states for each filter
+  - Info box explaining payment options
+  - Loading states
+
+**Features Implemented:**
+
+**1. Summary Statistics Dashboard:**
+- ✅ Total Penalties card: Count + total amount
+- ✅ Paid Penalties card: Count + paid amount (green)
+- ✅ Pending Dues card: Count + unpaid amount (orange)
+- ✅ Icon indicators for each stat
+
+**2. Filter Tabs:**
+- ✅ All Penalties tab with total count
+- ✅ Unpaid tab with unpaid count (orange highlight)
+- ✅ Paid tab with paid count (green highlight)
+- ✅ Active tab highlighting with bottom border
+- ✅ Hover effects
+
+**3. Penalties Table:**
+- ✅ Responsive table design
+- ✅ Columns: Date, Rule, Note, Amount, Status, Actions
+- ✅ Date formatting: "Jan 5, 2026, 10:30 AM" format
+- ✅ Rule title display (fallback to "Rule #ID")
+- ✅ Group ID display under rule name
+- ✅ Note display with italic fallback for empty notes
+- ✅ Currency formatting in INR (₹)
+- ✅ Status badges:
+  - PAID: Green badge with checkmark icon
+  - UNPAID: Orange badge with cancel icon
+- ✅ Upload Proof button for UNPAID penalties
+  - Shows toast notification: "Proof upload feature will be available in Task 9"
+  - Blue button with upload icon
+
+**4. Empty States:**
+- ✅ "No Penalties Yet" for users with no penalties
+- ✅ "No unpaid penalties" when filtering by UNPAID
+- ✅ "No paid penalties" when filtering by PAID
+- ✅ Helpful messages for each state
+
+**5. Information Box:**
+- ✅ Blue info box at bottom
+- ✅ Explains two payment options:
+  - Cash Payment: Pay admin directly
+  - Online/UPI Payment: Upload proof (Task 9)
+
+**6. Navigation:**
+- ✅ Added "My Penalties" link to sidebar
+- ✅ Icon: MdAccountBalance (wallet icon)
+- ✅ Route: `/my-penalties`
+- ✅ Protected route (requires authentication)
 
 **API Endpoints:**
-- `GET /users/{user_id}/penalties`
+- ✅ `GET /penalties/user/{user_id}` (fetch user's penalties with enriched data)
 
 **Deliverables:**
-- Penalties page with user's data
-- Working filters
-- Summary statistics
-- Upload proof button
+- ✅ Penalties page with user's data displayed
+- ✅ Working filters (All/Paid/Unpaid)
+- ✅ Summary statistics with accurate calculations
+- ✅ Upload proof button (placeholder for Task 9)
+- ✅ Responsive design
+- ✅ Loading and empty states
+- ✅ Currency formatting (INR)
+- ✅ Date/time formatting
+
+**Testing Checklist:**
+- ✅ View all penalties for logged-in user
+- ✅ Filter by "All" - shows all penalties
+- ✅ Filter by "Unpaid" - shows only unpaid
+- ✅ Filter by "Paid" - shows only paid
+- ✅ Verify total statistics are correct
+- ✅ Verify paid amount calculation
+- ✅ Verify due amount calculation
+- ✅ Check empty states for each filter
+- ✅ Test "Upload Proof" button shows toast
+- ✅ Verify rule title displays correctly
+- ✅ Verify date formatting
+- ✅ Verify currency formatting (INR)
+- ✅ Test responsive design on mobile
+- ✅ Test loading state
+- ✅ Test with no penalties (empty state)
+
+**Files Modified:**
+- Frontend:
+  - `src/pages/MyPenalties.jsx` - New file (complete user penalties page)
+  - `src/App.jsx` - Added route for /my-penalties
+  - `src/components/Sidebar.jsx` - Added "My Penalties" navigation link
+
+**Notes:**
+- Upload Proof functionality is a placeholder that shows a toast notification
+- Actual proof upload will be implemented in Task 9
+- The page uses existing GET /penalties/user/{user_id} endpoint (implemented in Task 7)
+- All amounts display in Indian Rupees (₹) for consistency
+
+---
+
+#### ✅ Task 9: Proof Upload & Management
+**Status:** Not Started
+
+**Note:** This task is specifically for **online/UPI payments** where users need to upload payment proof. For **cash payments**, admins can directly mark penalties as PAID using the "Mark as Paid" feature (implemented in Task 7).
+
+**Objectives:**
+- Create proof upload form/modal (for online/UPI payments only)
+- Implement file input:
+  - Accept image files only (jpg, png)
+  - Add image preview before upload
+  - Implement drag-and-drop functionality
+- Add note/reference field (e.g., UPI transaction ID)
+- Integrate multipart/form-data API call
+- Show uploaded proofs:
+  - Image thumbnail
+  - Upload date
+  - Status (PENDING/APPROVED/DECLINED)
+  - Admin note (if declined)
+- Display proof list for each penalty
+
+**Use Cases:**
+- **Online/UPI Payments:** User uploads screenshot of UPI transaction → Admin reviews proof → Approves/Declines → Penalty status changes to PAID if approved
+- **Cash Payments:** Admin directly marks penalty as PAID without proof (handled in Task 7, no proof upload needed)
+
+**API Endpoints:**
+- `POST /proofs` (upload proof)
+- `GET /proofs?penalty_id={id}` (get proofs for penalty)
+
+**Deliverables:**
+- Working file upload with preview
+- Drag-and-drop functionality
+- Proof list display
+- Status indicators
 
 **Testing:**
-- View all penalties
-- Filter by status
-- Verify correct totals
+- Upload proof image
+- Drag and drop file
+- View uploaded proofs
+- Check file type validation
+- Test status display
 - Test with no penalties (empty state)
 
 ---
