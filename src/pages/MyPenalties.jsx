@@ -3,12 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { MdGavel, MdCheckCircle, MdCancel, MdFileUpload } from 'react-icons/md';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import UploadProofModal from '../components/UploadProofModal';
 
 export default function MyPenalties() {
   const { user } = useAuth();
   const [penalties, setPenalties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('ALL'); // ALL, PAID, UNPAID
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedPenalty, setSelectedPenalty] = useState(null);
 
   useEffect(() => {
     if (user?.id) {
@@ -27,6 +30,15 @@ export default function MyPenalties() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUploadProof = (penalty) => {
+    setSelectedPenalty(penalty);
+    setShowUploadModal(true);
+  };
+
+  const handleUploadSuccess = () => {
+    fetchMyPenalties(); // Reload penalties after successful upload
   };
 
   // Filter penalties based on status
@@ -239,11 +251,7 @@ export default function MyPenalties() {
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm">
                       {penalty.status === 'UNPAID' && (
                         <button
-                          onClick={() => {
-                            toast('Proof upload feature will be available in Task 9', {
-                              icon: '📸',
-                            });
-                          }}
+                          onClick={() => handleUploadProof(penalty)}
                           className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors"
                         >
                           <MdFileUpload className="w-4 h-4 mr-1" />
@@ -272,12 +280,24 @@ export default function MyPenalties() {
             <div className="mt-2 text-sm text-blue-700">
               <ul className="list-disc list-inside space-y-1">
                 <li><strong>Cash Payment:</strong> Pay the admin directly. They will mark your penalty as PAID.</li>
-                <li><strong>Online/UPI Payment:</strong> Upload payment proof using the "Upload Proof" button (Feature coming in Task 9).</li>
+                <li><strong>Online/UPI Payment:</strong> Upload payment proof using the "Upload Proof" button. An admin will review and approve.</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Upload Proof Modal */}
+      {showUploadModal && selectedPenalty && (
+        <UploadProofModal
+          penalty={selectedPenalty}
+          onClose={() => {
+            setShowUploadModal(false);
+            setSelectedPenalty(null);
+          }}
+          onSuccess={handleUploadSuccess}
+        />
+      )}
     </div>
   );
 }
