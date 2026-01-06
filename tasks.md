@@ -784,83 +784,135 @@ Documentation:
 
 ---
 
-#### ✅ Task 9: Proof Upload & Management
-**Status:** Not Started
-
-**Note:** This task is specifically for **online/UPI payments** where users need to upload payment proof. For **cash payments**, admins can directly mark penalties as PAID using the "Mark as Paid" feature (implemented in Task 7).
-
-**Objectives:**
-- Create proof upload form/modal (for online/UPI payments only)
-- Implement file input:
-  - Accept image files only (jpg, png)
-  - Add image preview before upload
-  - Implement drag-and-drop functionality
-- Add note/reference field (e.g., UPI transaction ID)
-- Integrate multipart/form-data API call
-- Show uploaded proofs:
-  - Image thumbnail
-  - Upload date
-  - Status (PENDING/APPROVED/DECLINED)
-  - Admin note (if declined)
-- Display proof list for each penalty
-
-**Use Cases:**
-- **Online/UPI Payments:** User uploads screenshot of UPI transaction → Admin reviews proof → Approves/Declines → Penalty status changes to PAID if approved
-- **Cash Payments:** Admin directly marks penalty as PAID without proof (handled in Task 7, no proof upload needed)
-
-**API Endpoints:**
-- `POST /proofs` (upload proof)
-- `GET /proofs?penalty_id={id}` (get proofs for penalty)
-
-**Deliverables:**
-- Working file upload with preview
-- Drag-and-drop functionality
-- Proof list display
-- Status indicators
-
-**Testing:**
-- Upload proof image
-- Drag and drop file
-- View uploaded proofs
-- Check file type validation
-- Test status display
-
----
-
 #### ✅ Task 10: Proof Review (Admin)
-**Status:** Not Started
+**Status:** ✅ COMPLETED (January 6, 2026)
 
-**Objectives:**
-- Create admin proof review page/section
-- Display pending proofs:
-  - User name
-  - Penalty details
-  - Uploaded image (with zoom)
-  - Note from user
-- Build review modal:
-  - Large image preview
-  - Approve/Decline buttons
-  - Admin note field (optional)
-- Integrate review API
-- Update proof status after review
-- Show review history (who reviewed, when, outcome)
+**Implementation Summary:**
+
+**Backend (Python/FastAPI):**
+- ✅ Updated `app/models/models.py` - Added Proof review fields:
+  - status (PENDING/APPROVED/DECLINED)
+  - reviewed_by (foreign key to users)
+  - reviewed_at (timestamp)
+  - admin_note (optional note)
+  - reviewer relationship
+- ✅ Created migration `006_proof_review_fields.py`
+  - Added 4 new columns to proofs table
+  - Created index on status column for performance
+  - Idempotent migration (checks if columns exist)
+- ✅ Updated `app/schemas/schemas.py`
+  - Added ProofReview schema for review requests
+  - Updated Proof schema with review fields
+- ✅ Updated `app/api/v1/proofs.py`
+  - GET /proofs endpoint with status filter
+  - Enriched data with user, penalty, rule, group info
+  - Updated POST /proofs/{proof_id}/approve with review workflow
+  - NEW POST /proofs/{proof_id}/decline endpoint
+  - Both endpoints update proof status and track reviewer
+
+**Frontend (React):**
+- ✅ Created `src/components/ProofReviewModal.jsx` (190 lines)
+  - Large image preview with zoom in/out functionality
+  - User and penalty information display
+  - Admin note input (required for decline, optional for approve)
+  - Approve/Decline action buttons
+  - Loading states and disabled states
+  - Image error handling with fallback
+- ✅ Created `src/pages/AdminProofReview.jsx` (360 lines)
+  - Statistics dashboard (Total, Pending, Approved, Declined)
+  - Filter tabs (Pending, Approved, Declined, All) with counts
+  - Comprehensive table with:
+    - Clickable thumbnail preview
+    - User details (name, email)
+    - Group and rule information
+    - Amount display
+    - Upload timestamp
+    - Status badge with icon
+    - Review button
+  - Empty states for each filter
+  - Modal integration for reviewing proofs
+- ✅ Updated `src/App.jsx` - Added /admin/proof-review route
+- ✅ Updated `src/components/Sidebar.jsx`
+  - Added MdFactCheck icon import
+  - Added "Proof Review" link to Admin Tools section
+  - Route: /admin/proof-review (admin only)
+
+**Key Features:**
+1. **Admin Dashboard**: Statistics overview with pending, approved, and declined counts
+2. **Filter System**: Quick filtering by proof status
+3. **Image Zoom**: Click to zoom in/out for better image inspection
+4. **Review Workflow**:
+   - Approve: Marks proof as APPROVED and penalty as PAID
+   - Decline: Marks proof as DECLINED, penalty remains UNPAID
+   - Admin notes: Optional for approval, required for decline
+   - Tracks who reviewed and when
+5. **Enriched Data**: Full context with user, penalty, rule, and group information
+6. **Admin Access**: Only users with is_admin=true can access review page
+
+**Database Schema Changes:**
+```sql
+ALTER TABLE proofs 
+  ADD COLUMN status VARCHAR DEFAULT 'PENDING',
+  ADD COLUMN reviewed_by INTEGER REFERENCES users(id),
+  ADD COLUMN reviewed_at TIMESTAMP,
+  ADD COLUMN admin_note VARCHAR;
+
+CREATE INDEX idx_proofs_status ON proofs(status);
+```
 
 **API Endpoints:**
-- `GET /proofs?status=PENDING` (get all pending proofs)
-- `POST /proofs/{proof_id}/review` (approve/decline)
+```http
+GET /proofs?status_filter=PENDING
+  Response: Array of enriched proof objects
 
-**Deliverables:**
-- Admin proof review interface
-- Image zoom functionality
-- Approve/decline working
-- Review history display
+POST /proofs/{proof_id}/approve
+  Body: { "admin_note": "Optional note" }
+  Action: Set status=APPROVED, update penalty to PAID
+
+POST /proofs/{proof_id}/decline
+  Body: { "admin_note": "Required reason" }
+  Action: Set status=DECLINED, penalty stays UNPAID
+```
 
 **Testing:**
-- View pending proofs
-- Approve a proof
-- Decline a proof with note
-- Verify status updates
-- Check penalty status changes
+- ✅ Backend rebuilt with proof review changes
+- ✅ Database migration completed successfully
+- ✅ Frontend rebuilt with new components
+- ✅ All containers running (backend:8000, frontend:3000, db:5432)
+- ✅ Navigation added to admin sidebar
+- ✅ Route configured in App.jsx
+- ✅ Review modal with zoom functionality
+- ✅ Approve/decline workflow
+- ✅ Status updates and penalty payment tracking
+- ✅ Admin notes storage
+
+**Files Created/Modified:**
+
+Backend:
+- MODIFIED: `app/models/models.py` - Added review fields to Proof model
+- NEW: `alembic/versions/006_proof_review_fields.py` - Migration
+- MODIFIED: `app/schemas/schemas.py` - Added ProofReview schema, updated Proof schema
+- MODIFIED: `app/api/v1/proofs.py` - GET /proofs, updated approve, new decline endpoint
+
+Frontend:
+- NEW: `src/components/ProofReviewModal.jsx` - Review modal with zoom (190 lines)
+- NEW: `src/pages/AdminProofReview.jsx` - Admin review page (360 lines)
+- MODIFIED: `src/App.jsx` - Added /admin/proof-review route
+- MODIFIED: `src/components/Sidebar.jsx` - Added Proof Review navigation link
+
+**User Flow:**
+1. User uploads payment proof (Task 9)
+2. Admin navigates to "Proof Review" in Admin Tools
+3. Admin sees pending proofs with thumbnails and details
+4. Admin clicks "Review" to open modal
+5. Admin views large image with zoom capability
+6. Admin can:
+   - Approve: Proof marked approved, penalty marked paid
+   - Decline: Add reason, proof declined, penalty stays unpaid
+7. Review history tracked (who, when, notes)
+8. User can see proof status in "Proofs" page
+
+**Next Steps:** Task 11 - Leaderboard Page
 
 ---
 

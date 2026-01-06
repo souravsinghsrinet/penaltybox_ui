@@ -247,7 +247,7 @@ export default function Proofs() {
                       <div className="flex items-center">
                         {proof.image_url ? (
                           <img
-                            src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/${proof.image_url}`}
+                            src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/uploads/${proof.image_url}`}
                             alt="Payment proof"
                             className="h-12 w-12 rounded-lg object-cover border border-gray-200"
                             onError={(e) => {

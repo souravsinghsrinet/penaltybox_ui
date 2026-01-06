@@ -21,6 +21,7 @@ import MyPenalties from './pages/MyPenalties';
 import Rules from './pages/Rules';
 import Proofs from './pages/Proofs';
 import Leaderboard from './pages/Leaderboard';
+import AdminProofReview from './pages/AdminProofReview';
 
 function App() {
   return (
@@ -77,7 +78,8 @@ function App() {
               <Route path="/proofs" element={<Proofs />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               
-              {/* Admin Routes - Add later with admin check */}
+              {/* Admin Routes */}
+              <Route path="/admin/proof-review" element={<AdminProofReview />} />
               {/* <Route path="/admin/create-group" element={<CreateGroup />} /> */}
               {/* <Route path="/admin/manage" element={<AdminManage />} /> */}
             </Route>

@@ -12,6 +12,7 @@ import {
   MdAdminPanelSettings,
   MdClose,
   MdAccountBalance,
+  MdFactCheck,
 } from 'react-icons/md';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -31,6 +32,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   // Additional items for admin users
   const adminNavItems = [
+    { path: '/admin/proof-review', icon: MdFactCheck, label: 'Proof Review' },
     { path: '/admin/create-group', icon: MdAdd, label: 'Create Group' },
     { path: '/admin/manage', icon: MdAdminPanelSettings, label: 'Manage' },
   ];
