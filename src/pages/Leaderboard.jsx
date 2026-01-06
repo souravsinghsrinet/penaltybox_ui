@@ -15,7 +15,9 @@ const Leaderboard = () => {
   const fetchGlobalLeaderboard = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/groups/leaderboard/global');
+      const response = await api.get('/groups/leaderboard/global', {
+        params: { sort_by: 'total_amount' }
+      });
       setLeaderboard(response.data.leaderboard || []);
       setTotalGroups(response.data.total_groups || 0);
     } catch (error) {

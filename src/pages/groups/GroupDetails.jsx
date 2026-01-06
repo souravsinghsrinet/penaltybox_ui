@@ -103,7 +103,9 @@ export default function GroupDetails() {
   const fetchLeaderboard = async () => {
     try {
       setLoadingTab(true);
-      const response = await api.get(`/groups/${id}/leaderboard`);
+      const response = await api.get(`/groups/${id}/leaderboard`, {
+        params: { sort_by: 'total_amount' }
+      });
       setLeaderboard(response.data.leaderboard || []);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
