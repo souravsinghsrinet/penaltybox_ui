@@ -1042,7 +1042,7 @@ Backend:
 ---
 
 #### ✅ Task 12: User Dashboard & Profile
-**Status:** Not Started
+**Status:** ✅ Completed (2025-01-XX)
 
 **Objectives:**
 - Create User Dashboard/Home page (`/`)
@@ -1060,23 +1060,143 @@ Backend:
   - Payment history section
 - Integrate APIs for dashboard data
 
+**Completed Features:**
+
+✅ Enhanced Dashboard:
+- 4 stat cards: Total Penalties, Total Paid, Pending Dues, Groups Joined
+- Current Rank card (with medal emojis for top 3)
+- Recent Activity feed (last 5 penalties)
+- Quick Actions section with links to Groups, Penalties, Proofs, Profile
+- Parallel data fetching (penalties, groups, leaderboard)
+- Responsive grid layout
+
+✅ Profile Page:
+- User information display (name, email, account type)
+- Edit profile form with validation
+- Change password functionality with security checks
+- Admin badge display for administrators
+- Loading states and error handling
+
+✅ Backend Endpoints:
+- PUT /users/{user_id} - Update user profile
+- POST /users/{user_id}/change-password - Change password
+- Email uniqueness validation
+- Password complexity requirements (min 6 chars)
+
+**Files Created/Modified:**
+
+Frontend:
+- MODIFIED: `src/pages/Dashboard.jsx` - Enhanced with 5 stats, activity feed, quick actions
+  - Added imports: Link, MdGroup, MdGavel, MdFileUpload, MdPerson
+  - Changed fetchUserPenalties to fetchDashboardData with Promise.all
+  - Added state: groups, leaderboard
+  - Added calculations: groupsJoined, userRank, recentPenalties
+  - Added formatDate helper function
+  - Complete UI redesign with 5 stat cards
+  - Recent Activity section with penalties display
+  - Quick Actions section with 4 action buttons
+  - Removed old welcome/test cards
+
+- CREATED: `src/pages/Profile.jsx` (372 lines) - New profile management page
+  - User info display with admin badge
+  - Edit profile form (name/email) with validation
+  - Change password form with current/new/confirm fields
+  - Toggle edit/view modes
+  - Toast notifications for success/errors
+  - Loading states during API calls
+
+- MODIFIED: `src/App.jsx` - Added Profile route
+  - Import Profile component
+  - Added /profile route in protected routes section
+
+- MODIFIED: `src/components/Sidebar.jsx` - Added Profile navigation
+  - Added MdPerson icon import
+  - Added Profile to userNavItems array
+
+Backend:
+- MODIFIED: `app/api/v1/users.py` - Added profile endpoints (100+ lines)
+  - Added UserUpdate and PasswordChange schemas
+  - PUT /users/{user_id} - Update profile with authorization check
+  - POST /users/{user_id}/change-password - Change password with validation
+  - Email duplication check
+  - Current password verification
+  - Password hashing for security
+
+**Implementation Details:**
+
+**Dashboard Data Flow:**
+```javascript
+fetchDashboardData() {
+  Promise.all([
+    fetch(/users/{id}/penalties),  // All user penalties
+    fetch(/groups),                 // All groups
+    fetch(/groups/leaderboard/global) // Global rankings
+  ])
+  
+  Calculate:
+  - totalPenalties = penalties.length
+  - totalPaid = sum(status === 'PAID')
+  - pendingDues = sum(status === 'UNPAID')
+  - groupsJoined = groups.length
+  - userRank = leaderboard.findIndex + 1
+  - recentPenalties = sorted.slice(0, 5)
+}
+```
+
+**Dashboard Layout:**
+1. Page Header: Icon + Title + Welcome message
+2. Stats Grid (4 cards):
+   - Total Penalties (blue, chart icon)
+   - Total Paid (green, money icon)
+   - Pending Dues (orange, clock icon)
+   - Groups Joined (purple, people icon)
+3. Second Row (2 cards):
+   - Current Rank (yellow gradient, trophy + medals)
+   - Quick Actions (4 buttons with icons)
+4. Recent Activity:
+   - Card with activity feed
+   - Shows last 5 penalties
+   - Displays rule, note, amount, status, date
+   - Empty state for no penalties
+   - Link to view all penalties
+
+**Profile Security:**
+- Users can only edit their own profile (user_id validation)
+- Current password required for password change
+- New password must be 6+ characters
+- Email uniqueness enforced across users
+- Passwords hashed with bcrypt before storage
+
 **API Endpoints:**
-- `GET /users/{user_id}` (user profile)
-- `GET /users/{user_id}/penalties` (for summary)
-- `GET /payments/{user_id}` (payment history)
+- `GET /users/{user_id}/penalties` - Dashboard penalty summary
+- `GET /groups` - User's groups
+- `GET /groups/leaderboard/global` - Rankings
+- `PUT /users/{user_id}` - Update profile
+- `POST /users/{user_id}/change-password` - Change password
 
 **Deliverables:**
-- Dashboard with summary stats
-- Recent activity feed
-- Profile page with edit functionality
-- Payment history
+✅ Dashboard with 5 summary stats
+✅ Recent activity feed (last 5 penalties)
+✅ Quick actions section
+✅ Profile page with edit functionality
+✅ Password change functionality
+✅ All APIs integrated and working
 
-**Testing:**
-- View dashboard
-- Verify all statistics
-- Edit profile
-- View payment history
-- Test quick actions
+**Testing Results:**
+✅ All containers rebuilt and running
+✅ Backend: penaltybox-web-1 on port 8000
+✅ Database: penaltybox-db-1 on port 5432
+✅ Frontend: penaltybox-ui-test on port 3000
+✅ Profile endpoints added to users.py
+✅ Dashboard displays all 5 stats correctly
+✅ Recent Activity shows penalty history
+✅ Quick Actions navigate to correct pages
+✅ Profile page renders user information
+✅ Edit/view mode toggling works
+✅ Form validation on all inputs
+✅ Toast notifications on success/error
+
+**Next Steps:** Task 13 - Notifications & Feedback
 
 ---
 

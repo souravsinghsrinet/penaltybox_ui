@@ -13,6 +13,7 @@ import {
   MdClose,
   MdAccountBalance,
   MdFactCheck,
+  MdPerson,
 } from 'react-icons/md';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -28,6 +29,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { path: '/rules', icon: MdRule, label: 'Rules' },
     { path: '/proofs', icon: MdFileUpload, label: 'Proofs' },
     { path: '/leaderboard', icon: MdLeaderboard, label: 'Leaderboard' },
+    { path: '/profile', icon: MdPerson, label: 'Profile' },
   ];
 
   // Additional items for admin users

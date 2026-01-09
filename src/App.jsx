@@ -22,6 +22,7 @@ import Rules from './pages/Rules';
 import Proofs from './pages/Proofs';
 import Leaderboard from './pages/Leaderboard';
 import AdminProofReview from './pages/AdminProofReview';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
               <Route path="/rules" element={<Rules />} />
               <Route path="/proofs" element={<Proofs />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/profile" element={<Profile />} />
               
               {/* Admin Routes */}
               <Route path="/admin/proof-review" element={<AdminProofReview />} />
