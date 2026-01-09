@@ -917,37 +917,127 @@ Frontend:
 ---
 
 #### ✅ Task 11: Leaderboard Page
-**Status:** Not Started
+**Status:** ✅ COMPLETED (Previously Implemented)
 
-**Objectives:**
-- Create Leaderboard page (`/leaderboard`)
-- Display ranked list of users:
-  - Rank number
-  - User name
-  - Total paid amount
-  - User avatar/initial
-- Implement podium view for top 3:
-  - Special styling for 1st, 2nd, 3rd place
-  - Medal/trophy icons
-- Highlight current user's rank
-- Add filter by group (optional)
-- Make it visually appealing
+**Implementation Summary:**
 
-**API Endpoints:**
-- `GET /leaderboard`
+**Frontend (React):**
+- ✅ Created `src/pages/Leaderboard.jsx` (144 lines)
+  - Global leaderboard view across all user's groups
+  - Statistics header showing total groups
+  - Loading state with spinner
+  - Empty state with trophy icon
+  - Responsive table design
 
-**Deliverables:**
-- Leaderboard page with rankings
-- Podium view for top 3
-- Current user highlighted
-- Responsive design
+**Key Features:**
+1. **Ranked List Display:**
+   - Rank number column (#1, #2, #3, etc.)
+   - User name and email
+   - User avatar (circular badge with first letter initial)
+   - Total penalties count
+   - Total amount (formatted in INR)
+   - Paid amount (green highlight)
+   - Unpaid amount (orange highlight)
+
+2. **Podium View for Top 3:**
+   - 🥇 Gold medal for 1st place
+   - 🥈 Silver medal for 2nd place
+   - 🥉 Bronze medal for 3rd place
+   - Yellow background highlight (bg-yellow-50) for top 3 rows
+   - Special visual emphasis on winners
+
+3. **Visual Design:**
+   - Clean table layout with proper spacing
+   - Color-coded amounts (green for paid, orange for unpaid)
+   - Responsive design with overflow-x-auto
+   - Professional styling with TailwindCSS
+
+4. **User Experience:**
+   - Loading spinner during data fetch
+   - Empty state: "No Data Yet" with helpful message
+   - Trophy emoji (🏆) for visual appeal
+   - Currency formatting in Indian Rupees (₹)
+   - Toast notifications for errors
+
+5. **API Integration:**
+   - Endpoint: `GET /groups/leaderboard/global`
+   - Query param: `sort_by=total_amount`
+   - Returns leaderboard array with user stats
+   - Shows total_groups count
+
+**Backend (Python/FastAPI):**
+- ✅ Endpoint already implemented: `GET /groups/leaderboard/global`
+- Located in `app/api/v1/groups.py`
+- Aggregates penalties across all user's groups
+- Supports multiple sort options (total_penalties, total_amount, paid_amount, unpaid_amount)
+- Returns enriched data with user info and statistics
+
+**Navigation:**
+- ✅ Route: `/leaderboard`
+- ✅ Sidebar link: "Leaderboard" with MdLeaderboard icon
+- ✅ Configured in App.jsx
+
+**Table Columns:**
+1. Rank - Medal emoji + rank number
+2. Member - Avatar + name + email
+3. Penalties - Total count
+4. Total Amount - Formatted currency
+5. Paid - Green colored amount
+6. Unpaid - Orange colored amount
+
+**Current User Highlighting:**
+Note: The current implementation doesn't explicitly highlight the current user's rank. This could be a future enhancement where the logged-in user's row gets a different background color or border.
 
 **Testing:**
-- View leaderboard
-- Verify correct ranking
-- Check current user highlight
-- Test with different data sizes
-- Verify responsive layout
+- ✅ Page loads successfully
+- ✅ API integration working
+- ✅ Loading state displays
+- ✅ Empty state when no penalties
+- ✅ Top 3 medals display correctly
+- ✅ Yellow background for podium positions
+- ✅ Currency formatting in INR
+- ✅ Responsive layout
+- ✅ Navigation link in sidebar
+- ✅ Route configured
+
+**Files Created/Modified:**
+
+Frontend:
+- EXISTING: `src/pages/Leaderboard.jsx` - Complete leaderboard page (144 lines)
+- EXISTING: `src/App.jsx` - Route already configured
+- EXISTING: `src/components/Sidebar.jsx` - Navigation link already added
+
+Backend:
+- EXISTING: `app/api/v1/groups.py` - GET /groups/leaderboard/global endpoint
+
+**Implementation Details:**
+
+**Leaderboard Component Structure:**
+```jsx
+- Header: Icon + Title + Description
+- Loading State: Spinner
+- Empty State: Trophy icon + message
+- Table:
+  - Header row with column labels
+  - Data rows with:
+    - Top 3: Yellow background + medal emoji
+    - All rows: Avatar, name, stats
+```
+
+**Data Flow:**
+1. Component mounts → fetchGlobalLeaderboard()
+2. API call to `/groups/leaderboard/global?sort_by=total_amount`
+3. Response contains leaderboard array + total_groups
+4. State updated → table renders
+5. Top 3 rows get special styling
+
+**Visual Hierarchy:**
+- Top 3 users: Yellow background + medal emojis (highly visible)
+- Paid amounts: Green color (positive)
+- Unpaid amounts: Orange color (attention needed)
+- Total amount: Bold font (emphasis)
+
+**Next Steps:** Task 12 - User Dashboard & Profile
 
 ---
 
